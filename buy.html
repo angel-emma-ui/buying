@@ -3,77 +3,156 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>共用下單紀錄</title>
+    <title>我的下單紀錄 - 雲端版</title>
+    <!-- 引入圓潤感字體：Zen Maru Gothic -->
     <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;700;900&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-gradient: linear-gradient(160deg, #3d4140 0%, #2b2e2d 100%);
+            /* 深邃背景色 */
+            --bg-gradient: linear-gradient(160deg, #3d4140 0%, #222524 100%);
+            /* 玉潤主視窗 - 柔和淺色 */
             --glass-bg: rgba(255, 255, 255, 0.96);
+            --glass-border: rgba(255, 255, 255, 1);
             --text-main: #333635;
             --text-sub: #8e9694;
-            --primary: #8e9775;
+            --primary: #8e9775; /* 鼠尾草綠 */
+            --accent: #d4c8be; /* 暖亞麻 */
             --font-family: 'Zen Maru Gothic', sans-serif;
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { margin: 0; padding: 20px; min-height: 100vh; background: var(--bg-gradient); background-attachment: fixed; font-family: var(--font-family); color: var(--text-main); display: flex; justify-content: center; align-items: flex-start; }
 
-        .app-container {
-            background: var(--glass-bg); backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
-            width: 100%; max-width: 460px; border-radius: 50px; padding: 40px 20px;
-            border: 2px solid #fff; box-shadow: 0 40px 80px rgba(0, 0, 0, 0.4);
-            display: flex; flex-direction: column; margin-top: env(safe-area-inset-top);
+        body {
+            margin: 0; padding: 20px; min-height: 100vh;
+            background: var(--bg-gradient);
+            background-attachment: fixed;
+            font-family: var(--font-family);
+            color: var(--text-main);
+            display: flex; justify-content: center; align-items: flex-start;
         }
 
-        h2 { text-align: center; font-size: 32px; font-weight: 900; margin: 0; letter-spacing: 0.15em; }
-        .subtitle { text-align: center; font-size: 12px; color: var(--text-sub); margin-bottom: 25px; letter-spacing: 2px; }
+        .app-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+            width: 100%; max-width: 460px;
+            border-radius: 50px; padding: 40px 20px;
+            border: 2px solid var(--glass-border);
+            box-shadow: 0 40px 80px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(255, 255, 255, 0.6);
+            display: flex; flex-direction: column;
+            margin-top: env(safe-area-inset-top);
+        }
+
+        .illustration-header { width: 100%; display: flex; justify-content: center; margin-bottom: 20px; }
+        .illustration-header svg { width: 70px; height: 70px; fill: var(--primary); filter: drop-shadow(0 6px 10px rgba(0,0,0,0.1)); }
+
+        h2 { text-align: center; font-size: 36px; font-weight: 900; margin: 0; letter-spacing: 0.15em; color: var(--text-main); }
+        .subtitle { text-align: center; font-size: 13px; color: var(--text-sub); margin-bottom: 25px; letter-spacing: 4px; font-weight: 700; }
         
-        .user-info { font-size: 10px; color: var(--primary); text-align: center; margin-bottom: 15px; opacity: 0.7; word-break: break-all; }
+        #user-display { font-size: 10px; color: var(--primary); text-align: center; margin-bottom: 20px; opacity: 0.6; font-weight: 700; }
 
-        .section-box { display: flex; flex-direction: column; gap: 10px; margin-bottom: 25px; }
-        input { border: 2px solid #f0f0f0; background: #fff; padding: 14px 18px; border-radius: 18px; font-family: var(--font-family); font-size: 15px; outline: none; }
-        button#add-btn { background: var(--primary); color: #fff; border: none; padding: 14px; border-radius: 18px; font-family: var(--font-family); font-weight: 700; font-size: 16px; cursor: pointer; }
+        .section-box { display: flex; flex-direction: column; gap: 12px; margin-bottom: 30px; }
+        input {
+            border: 2px solid #f0f0f0; background: #ffffff; padding: 16px 20px;
+            border-radius: 20px; font-family: var(--font-family); font-size: 16px; outline: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+        }
+        input:focus { border-color: var(--primary); box-shadow: 0 8px 20px rgba(142, 151, 117, 0.1); }
 
-        .tabs { display: flex; justify-content: center; gap: 8px; margin-bottom: 20px; background: #f4f4f0; padding: 5px; border-radius: 18px; }
-        .tab { font-size: 12px; color: var(--text-sub); cursor: pointer; padding: 6px 14px; border-radius: 12px; font-weight: 700; }
-        .tab.active { background: white; color: var(--text-main); box-shadow: 0 4px 8px rgba(0,0,0,0.05); }
+        button#add-btn {
+            background: var(--primary); color: #fff; border: none; padding: 16px;
+            border-radius: 20px; font-family: var(--font-family); font-weight: 700; font-size: 18px;
+            cursor: pointer; box-shadow: 0 10px 20px rgba(142, 151, 117, 0.25);
+            transition: 0.3s;
+        }
+        button#add-btn:active { transform: scale(0.96); }
 
-        .order-list { max-height: 400px; overflow-y: auto; }
-        .order-item { background: #fff; margin-bottom: 10px; padding: 15px; border-radius: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
-        
-        .order-info { flex: 1; min-width: 0; cursor: pointer; margin-right: 8px; }
-        .order-name { font-size: 15px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
-        .order-meta { font-size: 10px; color: var(--text-sub); }
-        .order-author { font-size: 9px; color: var(--primary); font-style: italic; }
+        .tabs { display: flex; justify-content: center; gap: 8px; margin-bottom: 25px; background: #f4f4f0; padding: 6px; border-radius: 20px; }
+        .tab { font-size: 13px; color: var(--text-sub); cursor: pointer; padding: 8px 16px; border-radius: 15px; transition: 0.3s; font-weight: 700; }
+        .tab.active { background: white; color: var(--text-main); box-shadow: 0 4px 10px rgba(0,0,0,0.06); }
 
-        .actions { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
-        .status-badge { font-size: 10px; padding: 5px 10px; border-radius: 10px; border: 1.5px solid #eee; cursor: pointer; font-weight: 700; white-space: nowrap; }
+        /* 清單列表佈局 */
+        .order-list { max-height: 400px; overflow-y: auto; padding-right: 4px; }
+        .order-list::-webkit-scrollbar { width: 4px; }
+        .order-list::-webkit-scrollbar-thumb { background: #e0e0e0; border-radius: 10px; }
+
+        .order-item {
+            background: #fff; margin-bottom: 12px; padding: 18px;
+            border-radius: 25px; display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.02); animation: bounceIn 0.5s ease both;
+        }
+
+        @keyframes bounceIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+
+        .order-info { flex: 1; min-width: 0; display: flex; align-items: center; gap: 12px; margin-right: 10px; cursor: pointer; }
+        .item-icon { 
+            width: 40px; height: 40px; flex-shrink: 0;
+            background: #fdfdfb; border-radius: 14px;
+            display: flex; justify-content: center; align-items: center; font-size: 20px;
+        }
+        .order-text { min-width: 0; display: flex; flex-direction: column; }
+        .order-name { font-size: 16px; font-weight: 700; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .order-meta { font-size: 11px; color: var(--text-sub); margin-top: 3px; }
+
+        .actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+        .status-badge {
+            font-size: 11px; padding: 6px 12px; border-radius: 12px;
+            border: 1.5px solid #eee; cursor: pointer; background: #fff;
+            color: var(--text-sub); font-weight: 700; white-space: nowrap; transition: 0.3s;
+        }
         .status-delivered { background: var(--primary); color: #fff; border-color: var(--primary); }
-        .delete-btn { color: #eee; cursor: pointer; background: none; border: none; font-size: 16px; }
+        .delete-btn { color: #eee; cursor: pointer; background: none; border: none; padding: 4px; font-size: 18px; }
 
-        /* 彈窗 */
+        /* 彈窗樣式 */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); backdrop-filter: blur(8px); z-index: 999; }
-        .modal-window { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 30px; border-radius: 35px; width: 85%; max-width: 320px; text-align: center; z-index: 1000; }
-        .detail-card { text-align: left; background: #f9f9f7; padding: 15px; border-radius: 15px; margin-bottom: 20px; font-size: 14px; }
+        .modal-window { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 35px; border-radius: 40px; box-shadow: 0 40px 100px rgba(0,0,0,0.3); z-index: 1000; width: 85%; max-width: 340px; text-align: center; }
+        .detail-card { text-align: left; background: #f9f9f7; padding: 20px; border-radius: 20px; margin-bottom: 25px; font-size: 14px; line-height: 1.6; }
+        .detail-label { font-size: 11px; color: var(--text-sub); display: block; margin-top: 10px; font-weight: 700; }
+        .detail-value { font-weight: 700; color: var(--text-main); word-break: break-all; }
+        .modal-btn { background: var(--primary); color: white; border: none; padding: 12px 35px; border-radius: 18px; font-family: var(--font-family); font-weight: 700; cursor: pointer; }
+
+        .export-section { margin-top: 25px; text-align: center; }
+        .export-link { font-size: 11px; color: var(--text-sub); text-decoration: none; cursor: pointer; font-weight: 700; opacity: 0.7; }
     </style>
 </head>
 <body>
 
 <div id="modal-overlay" class="modal-overlay"></div>
+
+<!-- 詳情彈窗 -->
 <div id="detail-modal" class="modal-window">
-    <h3 style="margin:0 0 15px 0; font-weight:900;">商品詳情</h3>
-    <div class="detail-card" id="detail-content"></div>
-    <button style="background:var(--primary); color:white; border:none; padding:10px 30px; border-radius:15px; font-family:var(--font-family); font-weight:700;" onclick="closeModal()">關閉</button>
+    <h3 style="margin-top:0; font-weight:900; color:var(--primary);">商品詳情</h3>
+    <div class="detail-card">
+        <span class="detail-label">商品名稱</span>
+        <div id="det-name" class="detail-value"></div>
+        <span class="detail-label">購買平台</span>
+        <div id="det-platform" class="detail-value"></div>
+        <span class="detail-label">下單日期</span>
+        <div id="det-date" class="detail-value"></div>
+        <span class="detail-label">目前的狀態</span>
+        <div id="det-status" class="detail-value"></div>
+    </div>
+    <button class="modal-btn" onclick="closeModals()">關閉</button>
+</div>
+
+<!-- 警告彈窗 -->
+<div id="alert-modal" class="modal-window">
+    <p id="alert-text" style="font-weight: 700; font-size: 18px; margin-bottom: 25px;"></p>
+    <button class="modal-btn" onclick="closeModals()">知道囉</button>
 </div>
 
 <div class="app-container">
+    <div class="illustration-header">
+        <svg viewBox="0 0 24 24"><path d="M21 16.5C21 16.88 20.79 17.21 20.47 17.38L12.57 21.82C12.41 21.94 12.21 22 12 22C11.79 22 11.59 21.94 11.43 21.82L3.53 17.38C3.21 17.21 3 16.88 3 16.5V7.5C3 7.12 3.21 6.79 3.53 6.62L11.43 2.18C11.59 2.06 11.79 2 12 2C12.21 2 12.41 2.06 12.57 2.18L20.47 6.62C20.79 6.79 21 7.12 21 7.5V16.5M12 4.15L6.04 7.5L12 10.85L17.96 7.5L12 4.15M5 15.91L11 19.29V12.58L5 9.21V15.91M19 15.91V9.21L13 12.58V19.29L19 15.91Z" /></svg>
+    </div>
     <h2>下單紀錄</h2>
-    <p class="subtitle">Cloud Sync Enabled</p>
-    <div id="user-display" class="user-info">連線中...</div>
+    <p class="subtitle">Shopping Memories</p>
+    <div id="user-display">正在連線至雲端...</div>
     
     <div class="section-box">
+        <input type="text" id="searchInput" placeholder="🔍 搜尋清單...">
         <input type="text" id="itemName" placeholder="商品名稱">
-        <input type="text" id="platform" placeholder="在哪裡買的？">
+        <input type="text" id="platform" placeholder="購買平台">
         <button id="add-btn">新增並同步</button>
     </div>
 
@@ -84,146 +163,196 @@
     </div>
 
     <div id="orderList" class="order-list"></div>
+
+    <div class="export-section">
+        <button class="export-link" onclick="exportData()">💾 匯出備份文字檔</button>
+    </div>
 </div>
 
 <!-- Firebase SDK -->
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, collection, addDoc, onSnapshot, query, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-    const firebaseConfig = JSON.parse(__firebase_config);
+    // --------------------------------------------------
+    // ⚠️ 請在下方填入你從 Firebase Console 取得的 Config
+    // --------------------------------------------------
+    const firebaseConfig = {
+  apiKey: "AIzaSyCP7claYenVLYgmcMYAU0uzlgqHpLEfdBA",
+  authDomain: "myordertracker-472bf.firebaseapp.com",
+  projectId: "myordertracker-472bf",
+  storageBucket: "myordertracker-472bf.firebasestorage.app",
+  messagingSenderId: "949070920438",
+  appId: "1:949070920438:web:5d601f163d61383fb44ad7"
+  };
+
+    const appId = "my-shared-app-001"; // 你可以自定義 App ID，同 ID 的人會看到同份資料
+    
+    // 初始化 Firebase
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getFirestore(app);
-    const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
 
     let user = null;
     let orders = [];
     let currentFilter = 'all';
 
-    // 1. 認證處理
-    async function initAuth() {
-        if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-            await signInWithCustomToken(auth, __initial_auth_token);
-        } else {
-            await signInAnonymously(auth);
-        }
-    }
-
+    // 登入處理
     onAuthStateChanged(auth, (u) => {
         user = u;
         if (user) {
-            document.getElementById('user-display').innerText = `我的 ID: ${user.uid}`;
+            document.getElementById('user-display').innerText = `已連線 🟢 你的 ID: ${user.uid.substring(0,8)}...`;
             startSync();
+        } else {
+            signInAnonymously(auth).catch(err => {
+                showAlert("連線失敗，請檢查 Config 是否正確");
+                console.error(err);
+            });
         }
     });
 
-    initAuth();
-
-    // 2. 即時同步資料
+    // 資料同步
     function startSync() {
         if (!user) return;
-        // 使用 Rule 1 的指定路徑
         const ordersRef = collection(db, 'artifacts', appId, 'public', 'data', 'orders');
         
-        // 監聽資料庫變化 (Rule 2: 簡單查詢)
         onSnapshot(ordersRef, (snapshot) => {
             orders = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            // 在記憶體中排序 (最新在前面)
             orders.sort((a, b) => b.createdAt - a.createdAt);
             render();
         }, (error) => {
             console.error("同步失敗:", error);
+            showAlert("同步失敗，請確認 Firestore 規則已開啟");
         });
     }
 
-    // 3. UI 互動
-    const listEl = document.getElementById('orderList');
-    const nameIn = document.getElementById('itemName');
-    const platIn = document.getElementById('platform');
+    // UI 元素
+    const orderListContainer = document.getElementById('orderList');
+    const searchInput = document.getElementById('searchInput');
+    const itemNameInput = document.getElementById('itemName');
+    const platformInput = document.getElementById('platform');
 
+    // 新增紀錄
     document.getElementById('add-btn').onclick = async () => {
-        if (!user || !nameIn.value.trim()) return;
-        const ordersRef = collection(db, 'artifacts', appId, 'public', 'data', 'orders');
-        await addDoc(ordersRef, {
-            name: nameIn.value.trim(),
-            platform: platIn.value.trim() || '未分類',
-            isDelivered: false,
-            createdAt: Date.now(),
-            authorId: user.uid,
-            authorName: '朋友'
-        });
-        nameIn.value = '';
-        platIn.value = '';
+        const name = itemNameInput.value.trim();
+        const plat = platformInput.value.trim() || '未分類';
+        if (!name) { showAlert('記得寫商品名稱唷！'); return; }
+
+        try {
+            const ordersRef = collection(db, 'artifacts', appId, 'public', 'data', 'orders');
+            await addDoc(ordersRef, {
+                name: name,
+                platform: plat,
+                date: new Date().toLocaleDateString(),
+                createdAt: Date.now(),
+                isDelivered: false,
+                authorId: user.uid
+            });
+            itemNameInput.value = ''; platformInput.value = '';
+        } catch (e) {
+            showAlert("新增失敗，請檢查資料庫規則");
+        }
     };
 
-    window.toggleStatus = async (id, currentStatus) => {
-        if (!user) return;
-        const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'orders', id);
-        await updateDoc(docRef, { isDelivered: !currentStatus });
-    };
-
-    window.deleteOrder = async (id) => {
-        if (!user || !confirm('確定要刪除這筆共用紀錄嗎？')) return;
-        const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'orders', id);
-        await deleteDoc(docRef);
-    };
-
-    window.showDetails = (id) => {
-        const o = orders.find(i => i.id === id);
-        document.getElementById('detail-content').innerHTML = `
-            <strong>商品：</strong> ${o.name}<br>
-            <strong>平台：</strong> ${o.platform}<br>
-            <strong>日期：</strong> ${new Date(o.createdAt).toLocaleString()}<br>
-            <strong>狀態：</strong> ${o.isDelivered ? '已送達' : '待收貨'}<br>
-            <strong>紀錄者：</strong> ${o.authorId}
-        `;
-        document.getElementById('modal-overlay').style.display = 'block';
-        document.getElementById('detail-modal').style.display = 'block';
-    };
-
-    window.closeModal = () => {
-        document.getElementById('modal-overlay').style.display = 'none';
-        document.getElementById('detail-modal').style.display = 'none';
-    };
-
+    // 搜尋與分頁
+    searchInput.oninput = render;
     document.querySelectorAll('.tab').forEach(tab => {
         tab.onclick = () => {
             document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             tab.classList.add('active');
-            currentFilter = tab.dataset.type;
+            currentFilter = tab.getAttribute('data-type');
             render();
         };
     });
 
+    // 修改狀態
+    window.toggleStatus = async (id, currentStatus, event) => {
+        event.stopPropagation();
+        const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'orders', id);
+        await updateDoc(docRef, { isDelivered: !currentStatus });
+    };
+
+    // 刪除紀錄
+    window.deleteOrder = async (id, event) => {
+        event.stopPropagation();
+        if(confirm('確定要刪除這筆雲端紀錄嗎？')) {
+            const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'orders', id);
+            await deleteDoc(docRef);
+        }
+    };
+
+    // 詳情與彈窗
+    window.showDetails = (id) => {
+        const o = orders.find(item => item.id === id);
+        if (!o) return;
+        document.getElementById('det-name').innerText = o.name;
+        document.getElementById('det-platform').innerText = o.platform;
+        document.getElementById('det-date').innerText = o.date;
+        document.getElementById('det-status').innerText = o.isDelivered ? '已送達 ✓' : '等包裹中...';
+        document.getElementById('modal-overlay').style.display = 'block';
+        document.getElementById('detail-modal').style.display = 'block';
+    };
+
+    window.showAlert = (text) => {
+        document.getElementById('alert-text').innerText = text;
+        document.getElementById('modal-overlay').style.display = 'block';
+        document.getElementById('alert-modal').style.display = 'block';
+    };
+
+    window.closeModals = () => {
+        document.getElementById('modal-overlay').style.display = 'none';
+        document.getElementById('detail-modal').style.display = 'none';
+        document.getElementById('alert-modal').style.display = 'none';
+    };
+
     function render() {
-        listEl.innerHTML = '';
+        const keyword = searchInput.value.toLowerCase();
+        orderListContainer.innerHTML = '';
         const filtered = orders.filter(o => {
-            if (currentFilter === 'pending') return !o.isDelivered;
-            if (currentFilter === 'done') return o.isDelivered;
-            return true;
+            const mSearch = o.name.toLowerCase().includes(keyword) || o.platform.toLowerCase().includes(keyword);
+            const mTab = currentFilter === 'all' || (currentFilter === 'pending' && !o.isDelivered) || (currentFilter === 'done' && o.isDelivered);
+            return mSearch && mTab;
         });
+
+        if (filtered.length === 0) {
+            orderListContainer.innerHTML = `<div style="text-align:center; color:#ccd1cf; margin-top:50px; font-size:14px;">空空的唷 🍃</div>`;
+            return;
+        }
 
         filtered.forEach(o => {
             const div = document.createElement('div');
             div.className = 'order-item';
             div.innerHTML = `
                 <div class="order-info" onclick="showDetails('${o.id}')">
-                    <span class="order-name">${o.name}</span>
-                    <span class="order-meta">${o.platform}</span>
-                    <span class="order-author">By: ${o.authorId.substring(0,6)}...</span>
+                    <div class="item-icon">📦</div>
+                    <div class="order-text">
+                        <span class="order-name">${o.name}</span>
+                        <span class="order-meta">${o.platform.toUpperCase()} • ${o.date}</span>
+                    </div>
                 </div>
                 <div class="actions">
-                    <span class="status-badge ${o.isDelivered ? 'status-delivered' : ''}" onclick="toggleStatus('${o.id}', ${o.isDelivered})">
+                    <span class="status-badge ${o.isDelivered ? 'status-delivered' : ''}" onclick="toggleStatus('${o.id}', ${o.isDelivered}, event)">
                         ${o.isDelivered ? '已送達' : '待收貨'}
                     </span>
-                    <button class="delete-btn" onclick="deleteOrder('${o.id}')">✕</button>
+                    <button class="delete-btn" onclick="deleteOrder('${o.id}', event)">✕</button>
                 </div>
             `;
-            listEl.appendChild(div);
+            orderListContainer.appendChild(div);
         });
     }
+
+    window.exportData = () => {
+        if (orders.length === 0) { showAlert('還沒有資料唷！'); return; }
+        const dataStr = orders.map(o => `【${o.isDelivered ? '已送達' : '待收貨'}】${o.name} | ${o.platform} | ${o.date}`).join('\n');
+        const blob = new Blob([dataStr], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = `備份_${new Date().toLocaleDateString()}.txt`;
+        a.click(); URL.revokeObjectURL(url);
+    };
+
+    document.getElementById('modal-overlay').onclick = closeModals;
 </script>
 
 </body>
